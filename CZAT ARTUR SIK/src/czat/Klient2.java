@@ -23,7 +23,6 @@ public class Klient2 implements Runnable {
 		scanner = new Scanner(System.in);
 		System.out.println("Podaj numer portu: ");
 		Integer port = scanner.nextInt();
-		System.out.println(port);
 
 		// łączene z serwerem i tworzenie strumieni
 		try {

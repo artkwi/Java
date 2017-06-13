@@ -6,19 +6,23 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Random;
 
 public class Serwer {
 	private static ServerSocket serverSocket = null;
 	private static Socket socketKlient = null;
 	private static final int maxKlient = 10;
 	private static final WatkiKlienckie[] watkiKlient = new WatkiKlienckie[maxKlient];
+	private static Random generator = new Random();
+	public static int random = generator.nextInt(100);
+	public static Boolean czyGra = true;
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println("Serwer wystartował!");
 		
 		try {
 			// soket serwera
-			int port = 2013;
+			int port = 2014;
 			serverSocket = new ServerSocket(port);
 			serverSocket.setReuseAddress(true);
 

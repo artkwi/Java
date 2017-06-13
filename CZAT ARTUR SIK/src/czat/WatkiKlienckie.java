@@ -12,7 +12,18 @@ public class WatkiKlienckie extends Thread {
 	private Socket socketKlient = null;
 	private final WatkiKlienckie[] watkiKlient;
 	private int maxKlient;
-	String nazwaPokoju;
+	public static boolean isNumeric(String str)  
+	{  
+	  try  
+	  {  
+	    double d = Double.parseDouble(str);  
+	  }  
+	  catch(NumberFormatException nfe)  
+	  {  
+	    return false;  
+	  }  
+	  return true;  
+	}
 	
 	public WatkiKlienckie(Socket socketKlient, WatkiKlienckie[] watkiKlient) {
 		this.socketKlient = socketKlient;
@@ -31,7 +42,7 @@ public class WatkiKlienckie extends Thread {
 			output.writeUTF("Podaj swoją nazwę: ");
 			String nazwa = input.readUTF().trim();
 			System.out.println(nazwa);
-			output.writeUTF("Witaj " + nazwa + ", wpisz EXIT aby wyjść");
+			output.writeUTF("Witaj " + nazwa + ", wpisz EXIT aby wyjść.\nOdgadnij liczbę z zakresu 1 - 100: ");
 			
 			// wysłanie wiadmości do pozostałych użytkowników
 			for (int i=0 ; i< maxKlient ; i++) {
@@ -40,17 +51,38 @@ public class WatkiKlienckie extends Thread {
 				}
 			}
 			
+			
 			// czytanie wiadomości
 			while (true) {
+				String odpowiedz="";
 				String tekst;
 				tekst = input.readUTF().trim();
 				if (tekst.startsWith("EXIT")) {
 					break;
 				}
+				if (Serwer.czyGra) {
+					if (isNumeric(tekst)) {
+						int ile = Integer.parseInt(tekst);
+						if (ile > Serwer.random) {
+							System.out.println("Za dużo");
+							odpowiedz = " - za dużo";
+						}
+						if (ile < Serwer.random) {
+							System.out.println("Za mało");
+							odpowiedz = " - za mało";
+						}
+						if (ile == Serwer.random) {
+							System.out.println(
+									"Dobrze! " + nazwa + " jest zwycięzcą!\nMożecie teraz swobodnie poczatować ;)");
+							odpowiedz = " - dobrze! " + nazwa + " jest zwycięzcą!\nMożecie teraz swobodnie poczatować ;)";
+							Serwer.czyGra = false;
+						}
+					} 
+				}
 				// wysyłanie wiadomości do pozostałych użytkowników
 				for (int i=0 ; i < maxKlient ; i++) {
 					if (watkiKlient[i] != null) {
-						watkiKlient[i].output.writeUTF("<" + nazwa + ">: " + tekst);
+						watkiKlient[i].output.writeUTF("<" + nazwa + ">: " + tekst + odpowiedz);
 					}
 				}
 			}
@@ -58,8 +90,12 @@ public class WatkiKlienckie extends Thread {
 			// pożegnanie
 			
 			for ( int i=0; i <maxKlient ; i++) {
+			if (watkiKlient[i] != null) {
+				watkiKlient[i].output.writeUTF(nazwa + " wyszedł");
+			}
 				if (watkiKlient[i] == this) {
 					watkiKlient[i] = null;
+					
 				}
 			}
 			
