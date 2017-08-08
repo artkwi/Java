@@ -1,6 +1,5 @@
 package snake;
 
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -15,6 +14,7 @@ public class SnakePanel extends JPanel {
 		setVisible(true);
 		setBackground(Color.blue);
 		setPreferredSize(new Dimension(500, 500));
+		// 10 x 10 blocks
 		setLayout(new GridLayout(10, 10));
 		for (int i=0;i<10;i++) {
 			for (int j=0;j<10;j++){
