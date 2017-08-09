@@ -8,8 +8,8 @@ public class Snake {
 
 	public Snake() {
 		head_x = 2;
-		head_y = 2;
-		length = 1;
-		direct = 0;
+		head_y = 3;
+		length = 3;
+		direct = 3;
 	}
 }
