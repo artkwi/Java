@@ -33,26 +33,68 @@ public class Game {
 		return game;
 	}
 	
-	// check collisions with borders
+//	// check collisions with body
+//	public Boolean checkBodyCollisions (int direct) {
+//		if (direct == 0) {
+//			for (int i = 2; i < game.stage.x_position_list; i++ ) {
+//				
+//			}
+//		}
+//	}
+	
+	// check collisions
 	public Boolean checkCollision (Game game) {
 		Boolean collision = false;
 		int direct = game.stage.snake.direct;
+		int head_x = game.stage.snake.head_x;
+		int head_y = game.stage.snake.head_y;
+		
+		//border collisions
 		if ((direct == 0) && (game.stage.snake.head_x-1<0))
 			collision = true;
-		if ((direct == 1 ) && (game.stage.snake.head_x+2>game.stage.size_x))
+		else if ((direct == 1 ) && (game.stage.snake.head_x+2>game.stage.size_x))
 			collision = true;
-		if ((direct == 2 ) && (game.stage.snake.head_y-1<0))
+		else if ((direct == 2 ) && (game.stage.snake.head_y-1<0))
 			collision = true;
-		if ((direct == 3 ) && (game.stage.snake.head_y+2>game.stage.size_y))
+		else if ((direct == 3 ) && (game.stage.snake.head_y+2>game.stage.size_y))
 			collision = true;
+		
+		// body collisions
+		else if (direct == 0) {
+			for (int i = 2; i < game.stage.snake.length; i++ ) {
+				if ((game.stage.x_position_list.get(i) == head_x - 1) && (game.stage.y_position_list.get(i) == head_y))
+					collision = true;
+			}
+		}
+		else if (direct == 1) {
+			for (int i = 2; i < game.stage.snake.length; i++ ) {
+				if ((game.stage.x_position_list.get(i) == head_x + 1) && (game.stage.y_position_list.get(i) == head_y))
+					collision = true;
+			}
+		}
+		else if (direct == 2) {
+			for (int i = 2; i < game.stage.snake.length; i++ ) {
+				if ((game.stage.y_position_list.get(i) == head_y - 1)  && (game.stage.x_position_list.get(i) == head_x))
+					collision = true;
+			}
+		}
+		else if (direct == 3) {
+			for (int i = 2; i < game.stage.snake.length; i++ ) {
+				if ((game.stage.y_position_list.get(i) == head_y + 1) && (game.stage.x_position_list.get(i) == head_x))
+					collision = true;
+			}
+		}
+		
 		
 		return collision;
 	}
 	
 	// change head position
 	public Game move (Game game) {
+		// check collisions
 		if (game.checkCollision(game))
 			System.out.println("Kolizja");
+		// change head position
 		else {
 			// down
 			if (game.stage.snake.direct==0) {

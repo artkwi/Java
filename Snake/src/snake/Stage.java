@@ -26,6 +26,8 @@ public class Stage {
 		y_position_list.addLast(snake.head_y-1);
 		x_position_list.addLast(snake.head_x);
 		y_position_list.addLast(snake.head_y-2);
+		x_position_list.addLast(snake.head_x);
+		y_position_list.addLast(snake.head_y-3);
 	
 	}
 }

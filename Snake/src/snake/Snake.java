@@ -9,7 +9,7 @@ public class Snake {
 	public Snake() {
 		head_x = 2;
 		head_y = 3;
-		length = 3;
+		length = 4;
 		direct = 3;
 	}
 }
