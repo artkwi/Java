@@ -10,6 +10,7 @@ public class Game {
 
 	public Stage stage;
 	public SnakeFrame snakeFrame;
+	public Boolean game_over;
 	
 	public Game() {
 		
@@ -19,6 +20,7 @@ public class Game {
 	public Game(int size_x, int size_y, int speed) {
 		stage = new Stage(size_x,size_y,speed);
 		snakeFrame = new SnakeFrame();
+		game_over = false;
 	}
 	
 	public Game getDirect (Game game) {
@@ -92,9 +94,11 @@ public class Game {
 	// change head position
 	public Game move (Game game) {
 		// check collisions
-		if (game.checkCollision(game))
-			System.out.println("Kolizja");
-		// change head position
+		if (game.checkCollision(game)) {
+			game_over = true;
+				System.out.println("Kolizja");
+		}
+			// change head position
 		else {
 			// down
 			if (game.stage.snake.direct==0) {
@@ -120,12 +124,21 @@ public class Game {
 		game.stage.x_position_list.addFirst(game.stage.snake.head_x);
 		game.stage.y_position_list.addFirst(game.stage.snake.head_y);
 //		game.stage.snake.length++;
-		System.out.println("x: " + stage.x_position_list.getFirst());
-		System.out.println("y: " + stage.y_position_list.getFirst());
+//		System.out.println("x: " + stage.x_position_list.getFirst());
+//		System.out.println("y: " + stage.y_position_list.getFirst());
 		
 		return game;
 	}
 	
+	public void paintFeed (Game game) {
+		for (int i = 0 ; i < game.stage.size_x ; i++) {
+			for (int j = 0 ; j < game.stage.size_y ; j++) {
+				if ((i == game.stage.feed_x) && (j == game.stage.feed_y)) {
+					game.snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.BLACK);
+				}
+			}
+		}
+	}
 	
 	public static void main(String[] args) {
 		// stage 10x10 with speed 1
@@ -145,7 +158,9 @@ public class Game {
 			for (int i = 0 ; i < game.stage.snake.length ; i++) {
 					game.snakeFrame.snakePanel.buttons_array[game.stage.x_position_list.get(i)][game.stage.y_position_list.get(i)].setBackground(Color.RED);			
 			}
-			
+			// spawn feed
+			game.stage.spawnFeed_xy();
+			game.paintFeed(game);
 			// delay
 			try {
 				TimeUnit.SECONDS.sleep(1);
@@ -154,7 +169,10 @@ public class Game {
 			}
 			game.getDirect(game);
 			game.move(game);
+			if (game.game_over)
+				break;
 		}
+		game.snakeFrame.button.setText("Koniec gry");
 }
 }
 
