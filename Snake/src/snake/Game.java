@@ -14,8 +14,7 @@ public class Game {
 	
 	public Game() {
 		
-	}
-	
+	}	
 	
 	public Game(int size_x, int size_y, int speed) {
 		stage = new Stage(size_x,size_y,speed);
@@ -23,6 +22,7 @@ public class Game {
 		game_over = false;
 	}
 	
+	// get direct with forward forbiddance
 	public Game getDirect (Game game) {
 		if ((game.snakeFrame.key_pressed == 'w') && (game.stage.snake.direct != 1))
 			game.stage.snake.direct=0;
@@ -35,14 +35,6 @@ public class Game {
 		return game;
 	}
 	
-//	// check collisions with body
-//	public Boolean checkBodyCollisions (int direct) {
-//		if (direct == 0) {
-//			for (int i = 2; i < game.stage.x_position_list; i++ ) {
-//				
-//			}
-//		}
-//	}
 	
 	// check collisions
 	public Boolean checkCollision (Game game) {
@@ -118,26 +110,43 @@ public class Game {
 			}
 		}
 
-		// set position of head
-//		game.stage.snake_array[game.stage.snake.head_x][game.stage.snake.head_y] = true;
 		// add x and y position of head to current snake
 		game.stage.x_position_list.addFirst(game.stage.snake.head_x);
 		game.stage.y_position_list.addFirst(game.stage.snake.head_y);
-//		game.stage.snake.length++;
-//		System.out.println("x: " + stage.x_position_list.getFirst());
-//		System.out.println("y: " + stage.y_position_list.getFirst());
+		
+		if ((game.stage.snake.head_x == game.stage.feed_x) && (game.stage.snake.head_y == game.stage.feed_y)) {
+			// spawn feed
+			game.stage.eatFeed();
+			game.paintFeed();
+		}
 		
 		return game;
 	}
 	
-	public void paintFeed (Game game) {
-		for (int i = 0 ; i < game.stage.size_x ; i++) {
-			for (int j = 0 ; j < game.stage.size_y ; j++) {
-				if ((i == game.stage.feed_x) && (j == game.stage.feed_y)) {
-					game.snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.BLACK);
+	// paint feed
+	public void paintFeed () {
+		for (int i = 0 ; i < stage.size_x ; i++) {
+			for (int j = 0 ; j < stage.size_y ; j++) {
+				if ((i == stage.feed_x) && (j == stage.feed_y)) {
+					snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.BLACK);
 				}
 			}
 		}
+	}
+	
+	public void paintStage () {
+		// paint stage one colour
+		for (int i = 0 ; i < stage.size_x ; i++) {
+			for (int j = 0 ; j < stage.size_y ; j++) {
+					snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.cyan);
+			}
+		}
+		// paint snake
+		for (int i = 0 ; i < stage.snake.length ; i++) {
+				snakeFrame.snakePanel.buttons_array[stage.x_position_list.get(i)][stage.y_position_list.get(i)].setBackground(Color.RED);			
+		}
+		// paint feed
+		paintFeed();
 	}
 	
 	public static void main(String[] args) {
@@ -146,32 +155,22 @@ public class Game {
 //		System.out.println("game.stage.size_x: " + game.stage.size_x);
 //		System.out.println("game.stage.size_y: " + game.stage.size_y);
 			
+		game.stage.spawnFeed_xy();
+		game.paintStage();
+		game.paintFeed();
 		// moving in loop
 		while (true) {
-			// paint stage one colour
-			for (int i = 0 ; i < game.stage.size_x ; i++) {
-				for (int j = 0 ; j < game.stage.size_y ; j++) {
-						game.snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.cyan);
-				}
-			}
-			// paint snake
-			for (int i = 0 ; i < game.stage.snake.length ; i++) {
-					game.snakeFrame.snakePanel.buttons_array[game.stage.x_position_list.get(i)][game.stage.y_position_list.get(i)].setBackground(Color.RED);			
-			}
-			
-			game.getDirect(game);
-			game.move(game);
-			
-			// spawn feed
-			game.stage.eatFeed();
-			game.paintFeed(game);
-			
 			// speed delay
 			try {
 				TimeUnit.SECONDS.sleep(1);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			game.move(game);
+			game.paintStage();
+			game.getDirect(game);
+			
+			
 			if (game.game_over)
 				break;
 		}

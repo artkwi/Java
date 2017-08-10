@@ -39,8 +39,12 @@ public class Stage {
 		this.spawnFeed_xy();
 	}
 	
+	// check if head found feed
+	public void ifFeed() {
+		
+	}
 	
-	
+	// spawn new feed
 	public void spawnFeed_xy() {
 		Boolean empty_place = false;
 		Random random = new Random();
