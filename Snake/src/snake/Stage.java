@@ -34,6 +34,13 @@ public class Stage {
 	
 	}
 	
+	public void eatFeed() {
+		snake.growSnake();
+		this.spawnFeed_xy();
+	}
+	
+	
+	
 	public void spawnFeed_xy() {
 		Boolean empty_place = false;
 		Random random = new Random();

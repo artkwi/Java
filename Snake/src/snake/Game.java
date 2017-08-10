@@ -158,17 +158,20 @@ public class Game {
 			for (int i = 0 ; i < game.stage.snake.length ; i++) {
 					game.snakeFrame.snakePanel.buttons_array[game.stage.x_position_list.get(i)][game.stage.y_position_list.get(i)].setBackground(Color.RED);			
 			}
+			
+			game.getDirect(game);
+			game.move(game);
+			
 			// spawn feed
-			game.stage.spawnFeed_xy();
+			game.stage.eatFeed();
 			game.paintFeed(game);
-			// delay
+			
+			// speed delay
 			try {
 				TimeUnit.SECONDS.sleep(1);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			game.getDirect(game);
-			game.move(game);
 			if (game.game_over)
 				break;
 		}

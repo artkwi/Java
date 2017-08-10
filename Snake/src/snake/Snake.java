@@ -12,4 +12,8 @@ public class Snake {
 		length = 4;
 		direct = 3;
 	}
+	
+	public void growSnake() {
+		this.length++;
+	}
 }
