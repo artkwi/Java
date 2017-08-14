@@ -2,9 +2,11 @@
 
 package snake;
 
-import java.awt.Color;
-import java.io.Console;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.ImageIcon;
+
+import com.sun.prism.Image;
 
 public class Game {
 
@@ -23,7 +25,7 @@ public class Game {
 	}
 	
 	// get direct with forward forbiddance
-	public Game getDirect (Game game) {
+	public void getDirect (Game game) {
 		if ((game.snakeFrame.key_pressed == 'w') && (game.stage.snake.direct != 1))
 			game.stage.snake.direct=0;
 		if ((game.snakeFrame.key_pressed == 's') && (game.stage.snake.direct != 0))
@@ -32,7 +34,6 @@ public class Game {
 			game.stage.snake.direct=2;
 		if ((game.snakeFrame.key_pressed == 'd') && (game.stage.snake.direct != 2))
 			game.stage.snake.direct=3;
-		return game;
 	}
 	
 	
@@ -125,10 +126,17 @@ public class Game {
 	
 	// paint feed
 	public void paintFeed () {
+		// load graphic of feed, resize it to button size
+		ImageIcon icon_worm = new ImageIcon("worm.png");
+		java.awt.Image img_worm = icon_worm.getImage() ; 
+		java.awt.Image new_img_worm = img_worm.getScaledInstance(snakeFrame.snakePanel.buttons_array[0][0].getSize().width, snakeFrame.snakePanel.buttons_array[0][0].getSize().height,  java.awt.Image.SCALE_SMOOTH ) ;
+		icon_worm = new ImageIcon(new_img_worm);
+		// paint feed
 		for (int i = 0 ; i < stage.size_x ; i++) {
 			for (int j = 0 ; j < stage.size_y ; j++) {
 				if ((i == stage.feed_x) && (j == stage.feed_y)) {
-					snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.BLACK);
+//					snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.BLACK);
+					snakeFrame.snakePanel.buttons_array[i][j].setIcon(icon_worm);
 				}
 			}
 		}
@@ -136,45 +144,74 @@ public class Game {
 	
 	public void paintStage () {
 		// paint stage one colour
+		ImageIcon icon_grass = new ImageIcon("grass.jpg");
 		for (int i = 0 ; i < stage.size_x ; i++) {
 			for (int j = 0 ; j < stage.size_y ; j++) {
-					snakeFrame.snakePanel.buttons_array[i][j].setBackground(Color.cyan);
+				snakeFrame.snakePanel.buttons_array[i][j].setIcon(icon_grass);;
 			}
 		}
 		// paint snake
+		ImageIcon icon_snake = new ImageIcon("snake.jpg");
+		ImageIcon icon_snake_head;
+		String string_snake_head = "snake.jpg";
 		for (int i = 0 ; i < stage.snake.length ; i++) {
-				snakeFrame.snakePanel.buttons_array[stage.x_position_list.get(i)][stage.y_position_list.get(i)].setBackground(Color.RED);			
+			// pain body
+			snakeFrame.snakePanel.buttons_array[stage.x_position_list.get(i)][stage.y_position_list.get(i)].setIcon(icon_snake);
+			// paint head depend on moving
+			if (i==0) {
+				// default
+				icon_snake_head = new ImageIcon(string_snake_head);
+				if (stage.snake.direct==0) {
+					icon_snake_head = new ImageIcon("snake_head_0.jpg");
+				}
+				// up
+				if (stage.snake.direct==1) {
+					icon_snake_head = new ImageIcon("snake_head_1.jpg");
+				}
+				// left
+				if (stage.snake.direct==2) {
+					icon_snake_head = new ImageIcon("snake_head_2.jpg");
+				}
+				// right
+				if (stage.snake.direct==3) {
+					icon_snake_head = new ImageIcon("snake_head_3.jpg");
+				}
+				snakeFrame.snakePanel.buttons_array[stage.x_position_list.get(i)][stage.y_position_list.get(i)].setIcon(icon_snake_head);
+			}
 		}
 		// paint feed
 		paintFeed();
 	}
 	
 	public static void main(String[] args) {
-		// stage 10x10 with speed 1
+		// new game - stage 10x10 with speed 1
 		Game game = new Game(10,10,1);		
-//		System.out.println("game.stage.size_x: " + game.stage.size_x);
-//		System.out.println("game.stage.size_y: " + game.stage.size_y);
-			
+		
+		// feed appears in List
 		game.stage.spawnFeed_xy();
+		
+		// paint stage and feed at beginning
 		game.paintStage();
 		game.paintFeed();
 		// moving in loop
-		while (true) {
+		while (true) {	
 			// speed delay
 			try {
 				TimeUnit.SECONDS.sleep(1);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			// get direct from keyboard
+			game.getDirect(game);
+			// paint game again
 			game.move(game);
 			game.paintStage();
-			game.getDirect(game);
 			
-			
+			// leave loop if game is over
 			if (game.game_over)
 				break;
 		}
-		game.snakeFrame.button.setText("Koniec gry");
+
 }
 }
 

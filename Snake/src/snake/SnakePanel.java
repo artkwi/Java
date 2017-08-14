@@ -20,6 +20,7 @@ public class SnakePanel extends JPanel {
 			for (int j=0;j<10;j++){
 				buttons_array[i][j] = new JButton("");
 				add(buttons_array[i][j]);
+				buttons_array[i][j].setBorder(null);
 			}
 		}
 	}
