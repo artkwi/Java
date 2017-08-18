@@ -8,14 +8,17 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import com.sun.prism.Graphics;
 
 public class SnakeFrame extends JFrame implements KeyListener{
 	public SnakePanel snakePanel = new SnakePanel();
 	public SnakePanelInformation snakePanelInformation = new SnakePanelInformation();
+	public SnakePanelStartGame snakePanelStartGame = new SnakePanelStartGame();
 	public char key_pressed;
 	BufferedImage img;
 	
@@ -33,12 +36,23 @@ public class SnakeFrame extends JFrame implements KeyListener{
 		}
 		
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-//		snakePanel.setPreferredSize(500,500);
+		add(snakePanelStartGame);
+		//add(snakePanelInformation);
+		//add(snakePanel);
+		addKeyListener(this);	
+	}
+	
+	public void startGame() {
 		add(snakePanelInformation);
 		add(snakePanel);
-		addKeyListener(this);
+		remove(snakePanelStartGame);
+		// fix keylistener
+		setFocusable(true);
+		requestFocusInWindow(true);
 		
-		
+		ImageIcon icon = new ImageIcon("snake_start.jpg"); 
+		JLabel thumb = new JLabel();
+		thumb.setIcon(icon);
 	}
 	
 

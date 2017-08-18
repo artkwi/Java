@@ -15,7 +15,7 @@ public class SnakePanelInformation extends JPanel{
 		setVisible(true);
 		Lgreeting = new JLabel("Hello");
 		Lscore = new JLabel("Score: 0");
-		add(Lgreeting);
+		//add(Lgreeting);
 		add(Lscore);
 	}
 

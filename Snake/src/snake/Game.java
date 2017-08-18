@@ -13,6 +13,7 @@ public class Game {
 	public Stage stage;
 	public SnakeFrame snakeFrame;
 	public Boolean game_over;
+	public Boolean game_start;
 	private  int score;
 	
 	public Game() {
@@ -23,6 +24,7 @@ public class Game {
 		stage = new Stage(size_x,size_y,speed);
 		snakeFrame = new SnakeFrame();
 		game_over = false;
+		game_start = false;
 		score = 0;
 	}
 	
@@ -196,8 +198,13 @@ public class Game {
 
 	public static void main(String[] args) {
 		// new game - stage 10x10 with speed 1
-		Game game = new Game(10,10,1);		
+		Game game = new Game(10,10,1);	
 		
+		// loop waiting for start game
+		while (!game.snakeFrame.snakePanelStartGame.getGame_start()) {
+			
+		};
+		game.snakeFrame.startGame();
 		// feed appears in List
 		game.stage.spawnFeed_xy();
 		
@@ -208,7 +215,7 @@ public class Game {
 		while (true) {	
 			// speed delay
 			try {
-				TimeUnit.MILLISECONDS.sleep(300);
+				TimeUnit.MILLISECONDS.sleep(1000/game.snakeFrame.snakePanelStartGame.getSpeed());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
