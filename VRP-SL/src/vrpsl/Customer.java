@@ -10,22 +10,36 @@ public class Customer {
 	private int subset; // belong to one of "K" subsets
 	private double coord_x;
 	private double coord_y;
+	private double service_weight; // DO POPRAWY!!!!
 	private static int customer_counter = 0;
 
 	public Customer() {
 		setId(); 		// increment id of  customer
-		setDemand();	// do poprawy
+		setDemand(5);	// do poprawy
 		setProfit(6);	//do poprawy
 	}
 	
 	public Customer(int k) {
+		if(customer_counter==0) {
+			setDepot();
+		} else {
 		setId(); 		// increment id of  customer
-		setDemand();	// do poprawy
+		setDemand(5);	// do poprawy
 		setProfit(6);	//do poprawy
 		setSubset(k);	// random subset
 		setCoords_xy(10); // Random coordinates xy
+		}
 	}
 
+	
+	public void setDepot() {
+		setId();
+		setProfit(0);
+		setDemand(0);
+		this.subset=-1;
+		setCoord_x(0.0);
+		setCoord_y(0.0);
+	}
 	
 	
 	// getters and setters
@@ -73,15 +87,15 @@ public class Customer {
 	}
 
 	public void setId() {
-		this.id = ++customer_counter;
+		this.id = customer_counter++;
 	}
 
 	public int getDemand() {
 		return demand;
 	}
 
-	public void setDemand() {
-		this.demand = 5; 
+	public void setDemand(int demand) {
+		this.demand = demand; 
 	}
 
 	public int getProfit() {

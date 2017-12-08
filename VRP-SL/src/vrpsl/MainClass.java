@@ -23,6 +23,7 @@ public class MainClass {
 		// stworzenie n klientów
 		Customers customers = new Customers(customers_number, subsets_number);
 		customers.showCustomers();
+		customers.showDistance_matrix();
 		
 		Solutions solutions = new Solutions(mi_solutions_number, subsets_number, customers_number);
 		solutions.showSolutions();

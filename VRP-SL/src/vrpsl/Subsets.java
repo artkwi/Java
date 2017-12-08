@@ -34,7 +34,7 @@ public class Subsets {
 
 	public static void setZeroSubsets_amount(int K_size) {
 		for (int i = 0; i <K_size; i++) {
-			subsets_amount.add(i);
+			subsets_amount.add(0);
 		}
 	}
 
