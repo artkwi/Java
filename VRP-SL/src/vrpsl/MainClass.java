@@ -6,6 +6,7 @@ public class MainClass {
 
 	
 	public ArrayList<Solution> solutions_array;
+	public final static int Q = 50;
 	
 	//deklaracja struktury - klasa z chromosomem jakoœci us³ugi i œcie¿ki
 	// losowanie populacji

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Customers {
 	private static ArrayList<Customer> customers_array;
-	private static ArrayList<ArrayList<Double>> distance_matrix;
+	private static ArrayList<ArrayList<Integer>> distance_matrix;
 	private int size;
 	// default constructor create 5 Customers
 	public Customers() {}
@@ -13,7 +13,7 @@ public class Customers {
 	// constructor with "n" numbers of Customers and assigning to [1..K] set
 	public Customers(int n_customers, int k_sets) {
 		customers_array = new ArrayList<>();
-		distance_matrix = new ArrayList<ArrayList<Double>>();
+		distance_matrix = new ArrayList<ArrayList<Integer>>();
 		setCustomers_array(n_customers, k_sets);
 		setSize(n_customers);
 		computeDistance_matrix(n_customers);
@@ -24,7 +24,7 @@ public class Customers {
 		return customers_array.get(customer).getDemand();
 	}
 	
-	public static Double getDistance(int customer_1, int customer_2) {
+	public static Integer getDistance(int customer_1, int customer_2) {
 		return distance_matrix.get(customer_1).get(customer_2);
 	}
 	
@@ -33,11 +33,11 @@ public class Customers {
 			distance_matrix.add(new ArrayList<>());
 			for (int j = 0; j <= n_customers; j++) {
 				if (i==j) {
-					distance_matrix.get(i).add(0.00);
+					distance_matrix.get(i).add(0);
 				} else {
 				Customer c1 = customers_array.get(j);
 				Customer c2 = customers_array.get(i);
-				Double distance = Math.sqrt(Math.pow((c1.getCoord_x()-c2.getCoord_x()), 2) + Math.pow((c1.getCoord_y() - c2.getCoord_y()), 2)); 
+				Integer distance = (int) Math.round(Math.sqrt(Math.pow((c1.getCoord_x()-c2.getCoord_x()), 2) + Math.pow((c1.getCoord_y() - c2.getCoord_y()), 2))); 
 				distance_matrix.get(i).add(distance);
 				}
 			}			
@@ -47,9 +47,10 @@ public class Customers {
 	}
 	
 	public void showDistance_matrix() {
-		for (ArrayList<Double> distance_row : distance_matrix) {
-			for (Double distance : distance_row) {
-				System.out.print(Math.round(distance*100.0)/100.0+" ");
+		for (ArrayList<Integer> distance_row : distance_matrix) {
+			for (Integer distance : distance_row) {
+//				System.out.print(Math.round(distance*100.0)/100.0+" ");
+				System.out.print(distance+ " ");
 			}
 			System.out.println("");
 		}

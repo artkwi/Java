@@ -5,16 +5,26 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.omg.CORBA.CustomMarshal;
+
 public class Solution {
 	
 	private ArrayList<Double> service_lvl_chromosome;
 	private ArrayList<Integer> rout_chromosome;
 	private float biased;
 	
-	private ArrayList<Double> neighbour_distance_array = new ArrayList<>();;
-	private ArrayList<Double> deopt_customers_distance_array = new ArrayList<>();
-	private ArrayList<Double> cumulative_neighbour_distance_array = new ArrayList<>();
-	private ArrayList<Double> cumulative_demand_array = new ArrayList<>();
+	private ArrayList<Integer> neighbour_distance_array = new ArrayList<>();
+	private ArrayList<Integer> deopt_customers_distance_array = new ArrayList<>();
+	private ArrayList<Integer> cumulative_neighbour_distance_array = new ArrayList<>(); //D[i]
+	private ArrayList<Integer> cumulative_demand_array = new ArrayList<>();	// Q[i]
+	
+	
+	// SPLIT
+	private ArrayList<Integer> p_array;
+	private ArrayList<Integer> A_array;
+	private ArrayList<Integer> pred_array;
+	
+	// SPLIT
 	
 	public Solution() {
 		
@@ -27,7 +37,7 @@ public class Solution {
 		
 		
 		
-		// Random solution length beetwen [1..n]
+		// Random solution length between [1..n]
 		Random random = new Random();
 		int solution_size = random.nextInt(n_customers)+1;
 		rout_chromosome = new ArrayList<>(solution_size);
@@ -47,40 +57,134 @@ public class Solution {
 		fillCumulativeNeighbourDistanceArray();
 		fillDepotCustomerArray();
 		fillCumulativeDemand();
+		linearSplit();
+		showSolution();
 		
-		//fillDepotCustomerArray();
+	}
+	
+	// SPLIT 
+	
+	public void linearSplit() {
+		p_array = new ArrayList<>();
+		A_array = new ArrayList<>();
+		pred_array = new ArrayList<>();
+		int n = rout_chromosome.size();
+		
+		p_array.add(0);
+		A_array.add(0);
+		
+		for (int t = 1; t <= n; t++) {
+			p_array.add(p_array.get(A_array.get(0))+f(A_array.get(0),t));
+			pred_array.add(A_array.get(0));
+			if (t < n) {
+				if (!dominates(A_array.get(A_array.size()-1),t)) {
+					while ((A_array.size() > 0) && (dominates(t,A_array.get(A_array.size()-1)))) {
+						A_array.remove(A_array.size()-1);
+					}
+					A_array.add(t);
+				}
+				while (cumulative_demand_array.get(t+1) > MainClass.Q + cumulative_demand_array.get(0)) {
+					A_array.remove(0);
+				}
+			}
+		}	
 	}
 	
 	
+	public Integer f(int i, int x) {
+		if (cumulative_demand_array.get(x) - cumulative_demand_array.get(i) <= MainClass.Q) {
+			return (p_array.get(i) + c(i,x));
+		} else return 99999;
+	}
+	
+	public Integer c(int i, int j) {
+		return (deopt_customers_distance_array.get(i+1) + cumulative_neighbour_distance_array.get(j) - cumulative_neighbour_distance_array.get(i+1) + deopt_customers_distance_array.get(j));
+	}
+	
+	public Boolean dominates(int i, int j) {
+		if (i <= j) {
+			if ((p_array.get(i) + deopt_customers_distance_array.get(i+1) - cumulative_neighbour_distance_array.get(i+1) <= p_array.get(j) + deopt_customers_distance_array.get(j+1) - cumulative_neighbour_distance_array.get(j+1))&&(cumulative_demand_array.get(i)==cumulative_demand_array.get(j))) {
+				return true;
+			}	
+		} 
+		if (i > j) {
+			if (p_array.get(i) + deopt_customers_distance_array.get(i+1) - cumulative_neighbour_distance_array.get(i+1) <= p_array.get(j) + deopt_customers_distance_array.get(j+1) - cumulative_neighbour_distance_array.get(j+1))  {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void showSolution() {
+		System.out.println("\n\nSolution  chromoseome:");
+		for (Integer field : rout_chromosome) {
+			System.out.print(field + " ");
+		}
+		System.out.println("\nneighbours distance");
+		for (Integer neighbour : neighbour_distance_array) {
+			System.out.print(neighbour + " ");
+		}
+		System.out.println("\ndepot-customer distance");
+		for (Integer neighbour : deopt_customers_distance_array) {
+			System.out.print(neighbour + " ");
+		}
+		System.out.println("\ncumulative neighbours distance");
+		for (Integer neighbour : cumulative_neighbour_distance_array) {
+			System.out.print(neighbour + " ");
+		}
+		System.out.println("\ncumulative demand");
+		for (Integer neighbour : cumulative_demand_array) {
+			System.out.print(neighbour + " ");
+		}
+		System.out.println("\np_array:");
+		for (Integer p : p_array) {
+			System.out.print(p + " ");
+		}
+		
+		System.out.println("\npred_array:");
+		for (Integer integer : pred_array) {
+			System.out.print(integer + " ");
+		}
+		System.out.println("\nA_array:");
+		for (Integer integer : A_array) {
+			System.out.print(integer + " ");
+		}
+		
+	}
+	
+	// SPLIT
 	
 
 	// fill cumulative demand POPRAW
 		public void fillCumulativeDemand() {
-			cumulative_demand_array.add(0.0);
+			cumulative_demand_array.add(0);
+			cumulative_demand_array.add(Customers.getDemand(rout_chromosome.get(0)));
 			for (int i = 1; i < rout_chromosome.size(); i++) {
-				cumulative_demand_array.add(cumulative_demand_array.get(i-1) + Customers.getDemand(i));
+				cumulative_demand_array.add(cumulative_demand_array.get(i) + Customers.getDemand(rout_chromosome.get(i)));
 				}	
 			}
 	
 	// fill distances between depot and i-customer
 	public void fillDepotCustomerArray() {
-		deopt_customers_distance_array.add(0.0);
-		for (int i = 1; i < rout_chromosome.size(); i++) {
-			deopt_customers_distance_array.add(Customers.getDistance(0, i));
+		deopt_customers_distance_array.add(0);
+		for (int i = 0; i < rout_chromosome.size(); i++) {
+			deopt_customers_distance_array.add(Customers.getDistance(0, rout_chromosome.get(i)));
 			}	
 		}
 	
 	// sum up previous distance to distance between previous and current customer
 	public void fillCumulativeNeighbourDistanceArray() {
-		cumulative_neighbour_distance_array.add(0.0);
+		cumulative_neighbour_distance_array.add(0);
+		cumulative_neighbour_distance_array.add(Customers.getDistance(0, rout_chromosome.get(0)));
 		for (int i = 1; i < rout_chromosome.size(); i++) {
-				cumulative_neighbour_distance_array.add(cumulative_neighbour_distance_array.get(i-1)+Customers.getDistance(rout_chromosome.get(i-1), rout_chromosome.get(i)));
+				cumulative_neighbour_distance_array.add(cumulative_neighbour_distance_array.get(i)+Customers.getDistance(rout_chromosome.get(i-1), rout_chromosome.get(i)));
 			}	
 		}
 	
 	// fill distances between previous and current customer
 	public void fillNeighbourDistanceArray() {
-		neighbour_distance_array.add(0.0);
+		neighbour_distance_array.add(0);
+		neighbour_distance_array.add(Customers.getDistance(0, rout_chromosome.get(0)));
 		for (int i = 1; i < rout_chromosome.size(); i++) {
 				neighbour_distance_array.add(Customers.getDistance(rout_chromosome.get(i-1), rout_chromosome.get(i)));
 			}	
