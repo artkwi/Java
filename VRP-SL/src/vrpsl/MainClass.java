@@ -7,6 +7,7 @@ public class MainClass {
 	
 	public ArrayList<Solution> solutions_array;
 	public final static int Q = 50;
+	public final static int m = 4;
 	
 	//deklaracja struktury - klasa z chromosomem jakoœci us³ugi i œcie¿ki
 	// losowanie populacji
@@ -28,6 +29,8 @@ public class MainClass {
 		
 		Solutions solutions = new Solutions(mi_solutions_number, subsets_number, customers_number);
 		solutions.showSolutions();
+		
+		System.out.println("\n\n" +Customers.getTotal_profits());
 		
 	}
 }

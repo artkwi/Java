@@ -6,6 +6,7 @@ public class Customers {
 	private static ArrayList<Customer> customers_array;
 	private static ArrayList<ArrayList<Integer>> distance_matrix;
 	private int size;
+	private static int total_profits = 0;
 	// default constructor create 5 Customers
 	public Customers() {}
 	
@@ -17,6 +18,18 @@ public class Customers {
 		setCustomers_array(n_customers, k_sets);
 		setSize(n_customers);
 		computeDistance_matrix(n_customers);
+		computeTotalProfits();
+	}
+	
+	public static int getTotal_profits() {
+		return total_profits;
+	}
+
+
+	public static void computeTotalProfits() {
+		for (Customer customer : customers_array) {
+			total_profits += customer.getProfit();
+		}
 	}
 	
 	// Distance between 2 specified customers
@@ -73,7 +86,7 @@ public class Customers {
 	}
 	
 	// getters and setters
-	public ArrayList<Customer> getCustomers_array() {
+	public static ArrayList<Customer> getCustomers_array() {
 		return customers_array;
 	}
 	

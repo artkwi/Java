@@ -59,7 +59,6 @@ public class Customer {
 
 
 	public void setCoords_xy(double range) {
-		this.coord_x = coord_x;
 		Random random = new Random();
 		this.coord_x = random.nextDouble()*range;
 		this.coord_y = random.nextDouble()*range;
@@ -95,7 +94,8 @@ public class Customer {
 	}
 
 	public void setDemand(int demand) {
-		this.demand = demand; 
+		Random random = new Random();
+		this.demand = random.nextInt(6)+1;
 	}
 
 	public int getProfit() {
@@ -103,7 +103,8 @@ public class Customer {
 	}
 
 	public void setProfit(int profit) {
-		this.profit = profit;
+		Random random = new Random();
+		this.profit = random.nextInt(6)+1;
 	}
 
 	public static int getCustomer_counter() {

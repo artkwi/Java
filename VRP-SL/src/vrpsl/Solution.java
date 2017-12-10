@@ -24,7 +24,15 @@ public class Solution {
 	private ArrayList<Integer> A_array;
 	private ArrayList<Integer> pred_array;
 	
+	// M fleet split
+	private ArrayList<ArrayList<Integer>> p2_array;
+	private ArrayList<ArrayList<Integer>> pred2_array;
+	
 	// SPLIT
+	
+	// COST FUNCTION
+	private double cost =  0;
+	private int total_profit = 0;
 	
 	public Solution() {
 		
@@ -58,11 +66,61 @@ public class Solution {
 		fillDepotCustomerArray();
 		fillCumulativeDemand();
 		linearSplit();
+		
+		computeCostFunction();
 		showSolution();
 		
 	}
 	
+	
+	// DODAJ WSPÓ£CZYNNIK KARY WQ
+	public void computeCostFunction() {
+		this.cost = Customers.getTotal_profits() - computeTotalProfit()  + Math.max(0, p_array.get(p_array.size()-1) -MainClass.Q);
+	}
+	
+	public int computeTotalProfit() {
+		for (Integer field : rout_chromosome) {
+			total_profit +=Customers.getCustomers_array().get(field).getProfit();
+		}
+		return total_profit;
+	}
+	
+	
 	// SPLIT 
+	
+	// nie u¿ywane
+	public void linearSplit_M_fleet() {
+		p2_array = new ArrayList<ArrayList<Integer>>();
+		pred2_array = new ArrayList<ArrayList<Integer>>();
+		int n = rout_chromosome.size();
+		
+		for (int k = 0; k <= MainClass.m; k++) {
+			p2_array.add(new ArrayList<>());
+			p2_array.get(k).add(0);
+			pred2_array.add(new ArrayList<>());
+			for (int t = 0; t <= n; n++) {
+				p2_array.get(k).add(999999);
+				pred2_array.get(k).add(0);
+			}
+		}
+		
+		for (int k = 0; k <= MainClass.m ; k++) {
+			
+			A_array = new ArrayList<>();
+			A_array.add(k);
+			for (int t = k+1 ; t <= n; t++) {
+				if (!A_array.isEmpty()) {
+					p2_array.get(k+1).set(t, p2_array.get(k).get(A_array.get(0)) + f(A_array.get(0), t));
+					pred2_array.get(k+1).set(t, A_array.get(0));
+					if (t < n) {
+						//if (!dominates(i, j))
+					}
+				}
+			}
+			
+		}
+		
+	}
 	
 	public void linearSplit() {
 		p_array = new ArrayList<>();
@@ -83,18 +141,18 @@ public class Solution {
 					}
 					A_array.add(t);
 				}
-				while (cumulative_demand_array.get(t+1) > MainClass.Q + cumulative_demand_array.get(0)) {
-					A_array.remove(0);
-				}
+//				while (cumulative_demand_array.get(t+1) > MainClass.Q + cumulative_demand_array.get(0)) {
+//					A_array.remove(0);
+//				}
 			}
 		}	
 	}
 	
 	
 	public Integer f(int i, int x) {
-		if (cumulative_demand_array.get(x) - cumulative_demand_array.get(i) <= MainClass.Q) {
+		//if (cumulative_demand_array.get(x) - cumulative_demand_array.get(i) <= MainClass.Q) {
 			return (p_array.get(i) + c(i,x));
-		} else return 99999;
+		//} else return 99999;
 	}
 	
 	public Integer c(int i, int j) {
@@ -116,7 +174,7 @@ public class Solution {
 	}
 	
 	public void showSolution() {
-		System.out.println("\n\nSolution  chromoseome:");
+		System.out.println("\n\nSolution  chromoseome:  - COST=" + getCost());
 		for (Integer field : rout_chromosome) {
 			System.out.print(field + " ");
 		}
@@ -227,6 +285,10 @@ public class Solution {
 	}
 	public void setDopasowanie(float dopasowanie) {
 		this.biased = dopasowanie;
+	}
+
+	public double getCost() {
+		return cost;
 	}
 	
 	
