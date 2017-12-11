@@ -33,6 +33,8 @@ public class Solution {
 	// COST FUNCTION
 	private double cost =  0;
 	private int total_profit = 0;
+	private double total_chromosome_weight_ratio = 0.0;
+	private double sets_weight_satisfaction = 0;
 	
 	public Solution() {
 		
@@ -67,7 +69,11 @@ public class Solution {
 		fillCumulativeDemand();
 		linearSplit();
 		
+		computeTotalChromosomeWeightRatio();
+		computeSetsWeightSatisfaction();
+		computeTotalProfit();
 		computeCostFunction();
+		
 		showSolution();
 		
 	}
@@ -75,14 +81,30 @@ public class Solution {
 	
 	// DODAJ WSPÓ£CZYNNIK KARY WQ
 	public void computeCostFunction() {
-		this.cost = Customers.getTotal_profits() - computeTotalProfit()  + Math.max(0, p_array.get(p_array.size()-1) -MainClass.Q);
+		this.cost = Customers.getTotal_profits() - total_profit + MainClass.Wq*Math.max(0.00, p_array.get(p_array.size()-1) -MainClass.Q + sets_weight_satisfaction);
 	}
 	
 	public int computeTotalProfit() {
 		for (Integer field : rout_chromosome) {
-			total_profit +=Customers.getCustomers_array().get(field).getProfit();
+			this.total_profit +=Customers.getCustomers_array().get(field).getProfit();
 		}
 		return total_profit;
+	}
+	
+	public double computeTotalChromosomeWeightRatio() { // fi k(S)
+		double current_chromosome_weight = 0.0;
+		for (Integer field : rout_chromosome) {
+			current_chromosome_weight += Customers.getCustomers_array().get(field).getService_weight();
+		}
+		this.total_chromosome_weight_ratio = current_chromosome_weight / Customers.getTotal_customers_weight();
+		return total_chromosome_weight_ratio;
+	}
+	
+	public double computeSetsWeightSatisfaction() { // prawa czêœæ fi^cost (S)
+		for (Subset subset : Subsets.getSubsets_array()) {
+			this.sets_weight_satisfaction += Math.max(subset.getService_level() - total_chromosome_weight_ratio , 0.00) * subset.getPenalty() ;
+		}
+		return sets_weight_satisfaction;
 	}
 	
 	
@@ -174,7 +196,11 @@ public class Solution {
 	}
 	
 	public void showSolution() {
+		
 		System.out.println("\n\nSolution  chromoseome:  - COST=" + getCost());
+		System.out.println("total_chromosome_weight_ratio:" + total_chromosome_weight_ratio);
+		System.out.println("total customers weight:" +Customers.getTotal_customers_weight());
+		System.out.println("sets_weight_satisfaction: "  + sets_weight_satisfaction);
 		for (Integer field : rout_chromosome) {
 			System.out.print(field + " ");
 		}

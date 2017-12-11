@@ -4,7 +4,7 @@ import java.awt.List;
 import java.util.ArrayList;
 
 public class Solutions {
-	private ArrayList<Solution> solutions_array = new ArrayList<>();
+	private static ArrayList<Solution> solutions_array = new ArrayList<>();
 	private int mi_size;
 	
 	
@@ -35,7 +35,7 @@ public class Solutions {
 	}
 	
 	// getters and setters
-	public ArrayList<Solution> getSolutions_array() {
+	public static  ArrayList<Solution> getSolutions_array() {
 		return solutions_array;
 	}
 	public void setSolutions_array(int mi, int k_subsets, int n_customers) {

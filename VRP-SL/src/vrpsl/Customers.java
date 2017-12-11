@@ -1,12 +1,14 @@
 package vrpsl;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Customers {
 	private static ArrayList<Customer> customers_array;
 	private static ArrayList<ArrayList<Integer>> distance_matrix;
 	private int size;
 	private static int total_profits = 0;
+	private static double total_customers_weight;
 	// default constructor create 5 Customers
 	public Customers() {}
 	
@@ -19,6 +21,7 @@ public class Customers {
 		setSize(n_customers);
 		computeDistance_matrix(n_customers);
 		computeTotalProfits();
+		setTotal_customers_weight();
 	}
 	
 	public static int getTotal_profits() {
@@ -103,5 +106,17 @@ public class Customers {
 	}
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+
+	public static double getTotal_customers_weight() {
+		return total_customers_weight;
+	}
+
+
+	public  void setTotal_customers_weight() {
+		for (Customer customer : customers_array) {
+			total_customers_weight += customer.getService_weight();
+		}	
 	}
 }

@@ -28,6 +28,7 @@ public class Customer {
 		setProfit(6);	//do poprawy
 		setSubset(k);	// random subset
 		setCoords_xy(10); // Random coordinates xy
+		setService_weight();
 		}
 	}
 
@@ -109,6 +110,15 @@ public class Customer {
 
 	public static int getCustomer_counter() {
 		return customer_counter;
+	}
+
+	public double getService_weight() {
+		return service_weight;
+	}
+
+	public void setService_weight() {
+		Random random = new Random();
+		this.service_weight = Math.round(random.nextDouble()*300.00)/300.00;
 	}
 	
 	

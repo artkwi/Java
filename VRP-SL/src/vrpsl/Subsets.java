@@ -3,7 +3,7 @@ package vrpsl;
 import java.util.ArrayList;
 
 public class Subsets {
-	private ArrayList<Subset> subsets_array;
+	private static ArrayList<Subset> subsets_array;
 	private int K_size;
 	public static ArrayList<Integer> subsets_amount = new ArrayList<>();
 	
@@ -21,6 +21,13 @@ public class Subsets {
 
 	}
 
+	public static void showSubsetsServicelever() {
+		System.out.println("Subsets service level:");
+		for (Subset subset : subsets_array) {
+			System.out.println(subset.getService_level() + "  ");
+		}
+	}
+	
 	// increase number of defined set
 	
 	public static void increseK_subset_amount(int subset_number) {
@@ -39,7 +46,7 @@ public class Subsets {
 	}
 
 	// getters ans setters
-	public ArrayList<Subset> getSubsets_array() {
+	public static ArrayList<Subset> getSubsets_array() {
 		return subsets_array;
 	}
 

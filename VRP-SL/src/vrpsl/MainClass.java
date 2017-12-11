@@ -6,8 +6,9 @@ public class MainClass {
 
 	
 	public ArrayList<Solution> solutions_array;
-	public final static int Q = 50;
-	public final static int m = 4;
+	public final static int Q = 20;			//capacity of one vehicle
+	public final static int m = 4;			//number of vehicles
+	public final static double Wq = 2.0;	//penalty factor for overload capacity
 	
 	//deklaracja struktury - klasa z chromosomem jakoœci us³ugi i œcie¿ki
 	// losowanie populacji
@@ -20,6 +21,7 @@ public class MainClass {
 		// create K subsets
 		Subsets subsets = new Subsets(subsets_number);
 		//System.out.println(subsets.getSubsets_array().get(1).getId());
+		Subsets.showSubsetsServicelever();
 		
 		
 		// stworzenie n klientów
