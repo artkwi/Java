@@ -29,7 +29,7 @@ public class Subset {
 	}
 	public void setService_level() {
 		Random random = new Random();
-		this.service_level = Math.round((1.0 - (random.nextDouble()/2.0)) *100.00) / 100.00;	
+		this.service_level = Math.round((0.65 - (random.nextDouble()/2.0)) *100.00) / 100.00;	
 	}
 
 

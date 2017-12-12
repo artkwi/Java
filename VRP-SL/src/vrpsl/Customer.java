@@ -96,7 +96,7 @@ public class Customer {
 
 	public void setDemand(int demand) {
 		Random random = new Random();
-		this.demand = random.nextInt(6)+1;
+		this.demand = random.nextInt(10)+1;
 	}
 
 	public int getProfit() {
@@ -105,7 +105,7 @@ public class Customer {
 
 	public void setProfit(int profit) {
 		Random random = new Random();
-		this.profit = random.nextInt(6)+1;
+		this.profit = random.nextInt(5)+10;
 	}
 
 	public static int getCustomer_counter() {

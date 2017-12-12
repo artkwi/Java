@@ -11,7 +11,6 @@ public class Solution {
 	
 	private ArrayList<Double> service_lvl_chromosome;
 	private ArrayList<Integer> rout_chromosome;
-	private float biased;
 	
 	private ArrayList<Integer> neighbour_distance_array = new ArrayList<>();
 	private ArrayList<Integer> deopt_customers_distance_array = new ArrayList<>();
@@ -35,6 +34,12 @@ public class Solution {
 	private int total_profit = 0;
 	private double total_chromosome_weight_ratio = 0.0;
 	private double sets_weight_satisfaction = 0;
+	
+	//
+	private double diversity  = 0;
+	private double biased = 0;
+	
+	Boolean fesible;
 	
 	public Solution() {
 		
@@ -63,6 +68,10 @@ public class Solution {
 		}
 		setZeroServiceLevChromosome(K_subsets);
 		setService_lvl_chromosome();
+		
+		checkFesibility();
+		changeFeasibilityCounter();
+		
 		fillNeighbourDistanceArray();
 		fillCumulativeNeighbourDistanceArray();
 		fillDepotCustomerArray();
@@ -78,8 +87,27 @@ public class Solution {
 		
 	}
 	
+	// 
+	public Boolean checkFesibility() {
+		fesible = true;
+		for (int i = 0; i < service_lvl_chromosome.size(); i++) {
+			if (Subsets.getSubsets_array().get(i).getService_level() >= service_lvl_chromosome.get(i)) {
+				fesible = false;
+			}
+		}
+		return fesible;
+	}
+	public void changeFeasibilityCounter() {
+		if (fesible) {
+			Solutions.setFeasible_number(1);
+		} else {
+			Solutions.setInfeasible_number(1);
+		}
+	}
 	
-	// DODAJ WSPӣCZYNNIK KARY WQ
+	
+	
+	// COST FUNCTION
 	public void computeCostFunction() {
 		this.cost = Customers.getTotal_profits() - total_profit + MainClass.Wq*Math.max(0.00, p_array.get(p_array.size()-1) -MainClass.Q + sets_weight_satisfaction);
 	}
@@ -197,7 +225,9 @@ public class Solution {
 	
 	public void showSolution() {
 		
-		System.out.println("\n\nSolution  chromoseome:  - COST=" + getCost());
+		System.out.println("\n\nSolution  chromoseome:  - COST=" + getCost() + "   diversity=" + getDiversity());
+		if (fesible) System.out.println("feasible");
+		if (!fesible) System.out.println("no feasible");
 		System.out.println("total_chromosome_weight_ratio:" + total_chromosome_weight_ratio);
 		System.out.println("total customers weight:" +Customers.getTotal_customers_weight());
 		System.out.println("sets_weight_satisfaction: "  + sets_weight_satisfaction);
@@ -288,13 +318,16 @@ public class Solution {
 	// Compute service level chromosome
 	public void setService_lvl_chromosome() {
 		for (Integer field : rout_chromosome) {
+			if (field != 0) {
 			int subset = Customers.checkSubsetOfField(field);
 			service_lvl_chromosome.set(subset, service_lvl_chromosome.get(subset)+1);
+			}
 		}
 		for (int i = 0; i < service_lvl_chromosome.size(); i++) {
 			double subset_amout = (double) Subsets.getSubsets_amount_k(i);
 			if (subset_amout != 0) {
 			service_lvl_chromosome.set(i,service_lvl_chromosome.get(i) / subset_amout);
+			
 			}
 		}
 		
@@ -306,7 +339,7 @@ public class Solution {
 	public void setRout_chromosome(ArrayList<Integer> rout_chromosome) {
 		this.rout_chromosome = rout_chromosome;
 	}
-	public float getDopasowanie() {
+	public double getDopasowanie() {
 		return biased;
 	}
 	public void setDopasowanie(float dopasowanie) {
@@ -315,6 +348,22 @@ public class Solution {
 
 	public double getCost() {
 		return cost;
+	}
+
+	public double getDiversity() {
+		return diversity;
+	}
+
+	public void setDiversity(double diversity) {
+		this.diversity = diversity;
+	}
+
+	public double getBiased() {
+		return biased;
+	}
+
+	public void setBiased(double biased) {
+		this.biased = biased;
 	}
 	
 	
