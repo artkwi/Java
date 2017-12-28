@@ -10,7 +10,7 @@ public class Solutions {
 	private static int feasible_number = 0;
 	private static int infeasible_number = 0;
 	private int mi_size;
-	private Solution C_child;
+	private Solution C_child = new Solution();
 	
 	
 	public Solutions() {
@@ -29,14 +29,20 @@ public class Solutions {
 		
 		//Math.max(solutions_array.get(findParents().get(0)).getRout_chromosome().size(), solutions_array.get(findParents().get(1)).getRout_chromosome().size());
 		
-		Solution P1 = solutions_array.get(findParents().get(0));
-		Solution P2 = solutions_array.get(findParents().get(1));
-		Solution C;
+		System.out.println("findpar P1"  + findParents().get(0) + "  P1:" + findParents().get(0) + " P2:" + findParents().get(1));
+		Solution P1 = new Solution(solutions_array.get(findParents().get(0)));
+		Solution P2 = new Solution(solutions_array.get(findParents().get(1)));
+	
+		System.out.println("chromosome size P1: " + P1.getRout_chromosome().size());
+		System.out.println("chromosome size P2: " + P2.getRout_chromosome().size());
 		if (P1.getRout_chromosome().size() < P2.getRout_chromosome().size()) {
-			P1 = solutions_array.get(findParents().get(1));
-			P2 = solutions_array.get(findParents().get(0));
+
+			P1 = new Solution(solutions_array.get(findParents().get(1)));
+			P2 = new Solution(solutions_array.get(findParents().get(0)));
+			System.out.println("chromosome size P1: " + P1.getRout_chromosome().size());
+			System.out.println("chromosome size P2: " + P2.getRout_chromosome().size());
 		}
-		C = P1;
+		Solution C = new Solution(P1);
 		// fill route_chromosome with 0
 		for (int i  = 0; i < P1.getRout_chromosome().size() ; i++) {
 			C.getRout_chromosome().set(i, 0);
@@ -44,50 +50,85 @@ public class Solutions {
 		
 		// choose random a and b
 		Random random = new Random();
-		int a = random.nextInt(P1.getRout_chromosome().size());
-		int b = random.nextInt(P1.getRout_chromosome().size());
-		if (a > b) {
-			int c = b;
-			b = a;
-			a = c;
+		int a = 0;
+		int b = 0;
+		while (a>= b) {
+			a = random.nextInt(P1.getRout_chromosome().size());
+			b = random.nextInt(P1.getRout_chromosome().size());
 		}
+		
 		// Random service level chromosome between P1 and P2
 		ArrayList<Double> temp_service_lvl_chromosome = new ArrayList<>();
 		for(int i = 0; i < C.getService_lvl_chromosome().size(); i++) {
 		
 			double temp_lvl = 0.0;
-			do {
-				temp_lvl = random.nextDouble();
+			// when P1 and P2 service chromosome are equal
+			if (Math.max( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i)) == Math.min( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i))) {
+				temp_lvl = Math.max( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i));
+			} else {
+				// when P1 and P2 service chromosome are different 
+				do {
+					temp_lvl = random.nextDouble();
+					//System.out.print("temp_lvl: " + temp_lvl);
+					//System.out.print("   max(P1,P2)=" + Math.max( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i)));
+					//System.out.println("   min(P1,P2)=" + Math.min( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i)));
+				}
+				while (( temp_lvl > Math.max( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i))) || ( temp_lvl < Math.min( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i))));
 			}
-			while (( temp_lvl > Math.max( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i))) && ( temp_lvl < Math.min( P1.getService_lvl_chromosome().get(i) , P2.getService_lvl_chromosome().get(i))));
-		temp_service_lvl_chromosome.add(temp_lvl);
+			temp_service_lvl_chromosome.add(temp_lvl);
+	
+		}
+		System.out.print("  temp_srv_lvl_chrom: ");
+		for (Double field : temp_service_lvl_chromosome) {
+			System.out.print(" " + field);
 		}
 		
 		// [a,b] path from P1
+		
 		for (int i = a ; i <= b ; i++) {
 			C.getRout_chromosome().set(i, P1.getRout_chromosome().get(i));
+			C.setZeroServiceLevChromosome(4);
+			C.setService_lvl_chromosome();
+			if (checkTargetServiceLevel(temp_service_lvl_chromosome, C.getService_lvl_chromosome())) {
+				C.getRout_chromosome().remove(i);
+				C.setZeroServiceLevChromosome(4);
+				C.setService_lvl_chromosome();
+			}	
 		}
+		
+		System.out.println("\na=" + a + "  b=" + b);
+		System.out.println("C.size= "  + C.getRout_chromosome().size() +"   " + C.getRout_chromosome() + "   P1.size=" + P1.getRout_chromosome().size() + "  P2.size=" + P2.getRout_chromosome().size() );
+		
 		
 		// [b+1, P2.size()] path
 		for (int i = b+1 ; i < P2.getRout_chromosome().size(); i++) {
 			C.getRout_chromosome().set(i, P2.getRout_chromosome().get(i));
-			C.setService_lvl_chromosome();
+			C.setZeroServiceLevChromosome(4);
 			C.setService_lvl_chromosome();
 			if (checkTargetServiceLevel(temp_service_lvl_chromosome, C.getService_lvl_chromosome())) {
-				C.getService_lvl_chromosome().remove(i);
+				C.getRout_chromosome().remove(i);
+				C.setZeroServiceLevChromosome(4);
+				C.setService_lvl_chromosome();
 			}	
 		}
+		System.out.println("\n[" + a + ";" + P2.getRout_chromosome().size() +"]");
+		System.out.println("C.size= "  + C.getRout_chromosome().size() +"    " + C.getService_lvl_chromosome() +"   " + C.getRout_chromosome() + "   P1.size=" + P1.getRout_chromosome().size() + "  P2.size=" + P2.getRout_chromosome().size() );
 		
 		// [0, a-1] path
 		a = Math.max(P2.getService_lvl_chromosome().size(), a);
 				for (int i = 0 ; i < a; i++) {
 					C.getRout_chromosome().set(i, P2.getRout_chromosome().get(i));
-					C.setService_lvl_chromosome();
+					C.setZeroServiceLevChromosome(4);
 					C.setService_lvl_chromosome();
 					if (checkTargetServiceLevel(temp_service_lvl_chromosome, C.getService_lvl_chromosome())) {
-						C.getService_lvl_chromosome().remove(i);
-					}	
+						C.getRout_chromosome().remove(i);
+						C.setZeroServiceLevChromosome(4);
+						C.setService_lvl_chromosome();
+					}
 				}
+			System.out.println("\n[" + 0 + ";" +  P2.getRout_chromosome().size() +"]");
+			System.out.println("C.size= "  + C.getRout_chromosome().size() +"   " + C.getRout_chromosome() + "   P1.size=" + P1.getRout_chromosome().size() + "  P2.size=" + P2.getRout_chromosome().size() );
+				
 		// remove 0 fields in route chromosome
 				Iterator<Integer> iterator = C.getRout_chromosome().iterator();
 				while (iterator.hasNext()) {
@@ -104,10 +145,10 @@ public class Solutions {
 		Boolean crossed = false;
 		for (int i = 0; i < temp_service_lvl_chrom.size(); i++) {
 			if (temp_service_lvl_chrom.get(i) < service_lvl_chrom.get(i)) {
-				return false;
+				crossed =  true;
 			}
 		}
-		return true;
+		return crossed;
 	}
 	
 	
@@ -164,27 +205,20 @@ public class Solutions {
 		int j=0;
 		for (Solution solution : solutions_array) {
 			System.out.print("nr: " + j++ + "  " );
-			ArrayList<Double> service_lvl_chromosome = solution.getService_lvl_chromosome();
-			for (Double field : service_lvl_chromosome) {
-				System.out.print(field + "  ");
-			}
-			System.out.print("  ");
-			ArrayList<Integer> chromoseome = solution.getRout_chromosome();
-			for (Integer field : chromoseome) {
-				System.out.print(field+" ");
-			}
-			System.out.println("    cost=" + solution.getCost() +"  diversity=" + solution.getDiversity() + "  biased f=" + solution.getBiased());
+			System.out.print("   size: " + solution.getRout_chromosome().size()+ "  ");
+			
+			System.out.print("   srv lvl: ");
+			System.out.print(solution.getService_lvl_chromosome());
+			System.out.print("  route chromosome: ");
+			System.out.println(solution.getRout_chromosome());
+			//System.out.println("    cost=" + solution.getCost() +"  diversity=" + solution.getDiversity() + "  biased f=" + solution.getBiased());
 		}
 		System.out.println("P1=" + findParents().get(0) + "  P2=" + findParents().get(1));
-		System.out.print("C: \nservice level chromosome:  ");
-		for (Double field : C_child.getService_lvl_chromosome()) {
-			System.out.print(field + " ");
-		}
+		System.out.print("C: \nsize: " + C_child.getRout_chromosome().size());
+		System.out.print("   service level chromosome:  ");
+		System.out.print(C_child.getService_lvl_chromosome());
 		System.out.print("    route: ");
-		for (int i = 0; i < C_child.getRout_chromosome().size(); i++) {
-			
-			System.out.print(C_child.getRout_chromosome().get(i)+ " ");
-		}
+		System.out.println(C_child.getRout_chromosome());
 		
 	
 	}

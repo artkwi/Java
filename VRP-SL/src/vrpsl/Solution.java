@@ -44,6 +44,10 @@ public class Solution {
 	public Solution() {
 		
 	}
+	public Solution(Solution s) {
+		service_lvl_chromosome = new ArrayList<>(s.service_lvl_chromosome);
+		rout_chromosome = new ArrayList<>(s.rout_chromosome);
+	}
 	
 	// Constructor with mi size, concerning K_subsets and n_customers
 	public Solution(int mi, int K_subsets, int n_customers) {
@@ -54,8 +58,8 @@ public class Solution {
 		
 		// Random solution length between [1..n]
 		Random random = new Random();
-		int solution_size = random.nextInt(n_customers)+1;
-		rout_chromosome = new ArrayList<>(solution_size);
+		int solution_size = (random.nextInt(n_customers-1))+2;
+		rout_chromosome = new ArrayList<>();
 		
 		// add field to chromosome when field has never occured
 		for (int i = 0; i < solution_size; i++) {
@@ -305,6 +309,7 @@ public class Solution {
 		}
 	
 	public void setZeroServiceLevChromosome(int K_subsets ) {
+		service_lvl_chromosome = new  ArrayList<>();
 		for (int i = 0; i < K_subsets; i++) {
 			service_lvl_chromosome.add(0.0);
 		}

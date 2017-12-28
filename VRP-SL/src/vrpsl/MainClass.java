@@ -14,7 +14,7 @@ public class MainClass {
 	// losowanie populacji
 	
 	public static void main(String[] args) {
-		int customers_number = 10;
+		int customers_number = 30;
 		int mi_solutions_number = 5;
 		int subsets_number = 4;
 		
